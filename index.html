@@ -305,10 +305,13 @@
   .cell.empty { background: transparent; }
   .cell.day { background: #fff9c4; color: #6d4c00; }
   .cell.night { background: #263238; color: #b0bec5; }
+  .cell.day-ot { background: linear-gradient(135deg, #ffe082 0%, #ff9800 100%); color: #4a1e00; font-weight: 700; }
+  .cell.night-ot { background: linear-gradient(135deg, #263238 0%, #ff6f00 100%); color: #ffcc00; font-weight: 700; }
   .cell.rest { background: #f0f0f5; color: var(--sub); }
   .cell.sunday { background: #ffebee; color: #c62828; }
   .cell.holiday { background: #e8f5e9; color: #2e7d32; font-weight: 600; }
   .cell.out { background: transparent; color: #c7c7cc; }
+  .cell.overridden { outline: 2px dashed var(--blue); }
 
   .legend { display: flex; flex-wrap: wrap; gap: 8px; font-size: 11px; margin-top: 8px; }
   .legend span { display: inline-flex; align-items: center; gap: 4px; }
@@ -351,6 +354,230 @@
     background: #fff8e1; border-left: 3px solid var(--yellow);
     padding: 10px 12px; border-radius: 6px; font-size: 12px;
     margin-bottom: 12px; color: #6d4c00;
+  }
+
+  /* ===== 메모/기록 기능 ===== */
+  /* Todo */
+  .todo-add { display: flex; gap: 6px; margin-bottom: 10px; }
+  .todo-add input {
+    flex: 1; padding: 10px 12px; font-size: 14px;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: white; outline: none; font-family: inherit;
+  }
+  .todo-add input:focus { border-color: var(--blue); }
+  .todo-add button, .btn-primary {
+    background: var(--blue); color: white; border: none;
+    padding: 10px 14px; border-radius: 8px; font-size: 14px;
+    font-weight: 600; cursor: pointer; font-family: inherit;
+  }
+  .todo-list { list-style: none; padding: 0; }
+  .todo-item {
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px; background: var(--hover); border-radius: 8px;
+    margin-bottom: 6px; font-size: 14px;
+  }
+  .todo-item.done { opacity: 0.5; }
+  .todo-item.done .text { text-decoration: line-through; }
+  .todo-check {
+    width: 22px; height: 22px; border-radius: 50%;
+    border: 2px solid var(--muted); cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; background: white;
+  }
+  .todo-item.done .todo-check { background: var(--green); border-color: var(--green); color: white; }
+  .todo-item .text { flex: 1; }
+  .todo-item .del { color: var(--red); background: none; border: none; cursor: pointer; font-size: 18px; padding: 2px 6px; }
+
+  /* Condition */
+  .cond-input { display: grid; gap: 10px; }
+  .cond-row { display: flex; flex-direction: column; gap: 4px; }
+  .cond-row label { font-size: 12px; color: var(--sub); font-weight: 600; }
+  .cond-row input, .cond-row textarea, .cond-row select {
+    padding: 10px 12px; font-size: 14px;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: white; outline: none; font-family: inherit;
+  }
+  .cond-row input:focus, .cond-row textarea:focus, .cond-row select:focus { border-color: var(--blue); }
+  .cond-row textarea { resize: vertical; min-height: 60px; }
+  .rating {
+    display: flex; gap: 4px;
+  }
+  .rating button {
+    flex: 1; padding: 10px 4px; border: 2px solid var(--border);
+    background: white; border-radius: 8px; cursor: pointer;
+    font-size: 20px; font-family: inherit;
+  }
+  .rating button.selected {
+    background: #fff8e1; border-color: var(--yellow);
+  }
+  .btn-full { width: 100%; padding: 12px; margin-top: 6px; }
+  .cond-history { margin-top: 12px; }
+  .cond-entry {
+    background: var(--hover); border-radius: 8px; padding: 10px 12px;
+    margin-bottom: 6px; font-size: 12px;
+  }
+  .cond-entry .head { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .cond-entry .date { font-weight: 700; color: var(--text); }
+  .cond-entry .stars { color: #ffcc00; }
+
+  /* Memo */
+  .memo-entry {
+    background: var(--hover); border-radius: 10px; padding: 12px;
+    margin-bottom: 8px; font-size: 13px;
+  }
+  .memo-entry .head {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 6px; font-size: 11px; color: var(--muted);
+  }
+  .memo-entry .content { white-space: pre-wrap; line-height: 1.6; word-break: break-all; }
+  .memo-entry .actions {
+    display: flex; gap: 6px; margin-top: 8px;
+    padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.06);
+  }
+  .memo-entry .actions button {
+    flex: 1; padding: 8px 10px; font-size: 12px; font-weight: 600;
+    border: none; border-radius: 6px; cursor: pointer; font-family: inherit;
+  }
+  .memo-entry .btn-edit { background: var(--blue); color: white; }
+  .memo-entry .btn-del { background: #ffebee; color: var(--red); }
+  .memo-entry.editing .content { display: none; }
+  .memo-entry .edit-area { display: none; }
+  .memo-entry.editing .edit-area { display: block; }
+  .memo-entry .edit-area textarea {
+    width: 100%; padding: 8px 10px; margin-bottom: 6px;
+    border: 1px solid var(--blue); border-radius: 6px;
+    font-size: 13px; font-family: inherit; outline: none;
+    resize: vertical; min-height: 60px;
+  }
+  .memo-entry .edit-actions { display: flex; gap: 6px; }
+  .memo-entry .edit-actions button {
+    flex: 1; padding: 8px; font-size: 12px; font-weight: 600;
+    border: none; border-radius: 6px; cursor: pointer; font-family: inherit;
+  }
+  .memo-entry .btn-save { background: var(--green); color: white; }
+  .memo-entry .btn-cancel { background: var(--hover); color: var(--sub); }
+
+  /* Calendar - tappable + event indicator */
+  .cell.has-event { position: relative; }
+  .cell.has-event::after {
+    content: ""; position: absolute; top: 3px; right: 3px;
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #ff2d55;
+  }
+  .cell { cursor: pointer; transition: transform 0.1s; }
+  .cell:not(.empty):active { transform: scale(0.95); }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    z-index: 200; display: none;
+    align-items: flex-end; justify-content: center;
+  }
+  .modal-overlay.show { display: flex; animation: fadeIn 0.2s; }
+  .modal {
+    background: white; width: 100%; max-width: 900px;
+    border-radius: 20px 20px 0 0; padding: 16px;
+    max-height: 85vh; overflow-y: auto;
+    animation: slideUp 0.25s;
+  }
+  @keyframes slideUp { from { transform: translateY(100%); } to { transform: none; } }
+  .modal-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 12px;
+  }
+  .modal-title { font-size: 16px; font-weight: 700; }
+  .modal-close {
+    background: var(--hover); border: none;
+    width: 30px; height: 30px; border-radius: 50%;
+    font-size: 18px; cursor: pointer; color: var(--sub);
+  }
+  .modal-status {
+    padding: 10px 12px; border-radius: 8px; margin-bottom: 12px;
+    font-size: 13px; font-weight: 600;
+  }
+  .modal-status.day { background: #fff9c4; color: #6d4c00; }
+  .modal-status.night { background: #263238; color: #b0bec5; }
+  .modal-status.rest { background: #f0f0f5; color: var(--sub); }
+  .modal-status.sunday { background: #ffebee; color: #c62828; }
+  .modal-status.holiday { background: #e8f5e9; color: #2e7d32; }
+  .modal-status.out { background: #f2f2f7; color: var(--muted); }
+
+  .event-item {
+    background: #fff3e0; border-left: 3px solid #ff9500;
+    padding: 10px 12px; border-radius: 6px; margin-bottom: 8px;
+  }
+  .event-item .content { }
+  .event-item .title { font-weight: 700; font-size: 14px; }
+  .event-item .notes { font-size: 12px; color: var(--sub); margin-top: 4px; white-space: pre-wrap; word-break: break-all; }
+  .event-item .actions {
+    display: flex; gap: 6px; margin-top: 8px;
+    padding-top: 8px; border-top: 1px solid rgba(0,0,0,0.06);
+  }
+  .event-item .actions button {
+    flex: 1; padding: 8px 10px; font-size: 12px; font-weight: 600;
+    border: none; border-radius: 6px; cursor: pointer; font-family: inherit;
+  }
+  .event-item .btn-edit { background: var(--blue); color: white; }
+  .event-item .btn-del { background: #ffebee; color: var(--red); }
+  .event-item.editing .content { display: none; }
+  .event-item.editing .actions { display: none; }
+  .event-item .edit-area { display: none; }
+  .event-item.editing .edit-area { display: block; }
+  .event-item .edit-area input, .event-item .edit-area textarea {
+    width: 100%; padding: 8px 10px; margin-bottom: 6px;
+    border: 1px solid var(--blue); border-radius: 6px;
+    font-size: 13px; font-family: inherit; outline: none;
+  }
+  .event-item .edit-area textarea { resize: vertical; min-height: 50px; }
+  .event-item .edit-actions { display: flex; gap: 6px; }
+  .event-item .edit-actions button {
+    flex: 1; padding: 8px; font-size: 12px; font-weight: 600;
+    border: none; border-radius: 6px; cursor: pointer; font-family: inherit;
+  }
+  .event-item .btn-save { background: var(--green); color: white; }
+  .event-item .btn-cancel { background: var(--hover); color: var(--sub); }
+
+  .add-event-form { margin-top: 10px; }
+  .add-event-form input, .add-event-form textarea {
+    width: 100%; padding: 10px 12px; margin-bottom: 6px;
+    border: 1px solid var(--border); border-radius: 8px;
+    font-size: 14px; font-family: inherit; outline: none;
+  }
+  .add-event-form input:focus, .add-event-form textarea:focus { border-color: var(--blue); }
+  .add-event-form textarea { resize: vertical; min-height: 50px; }
+
+  .empty-state {
+    text-align: center; padding: 30px 20px;
+    color: var(--muted); font-size: 13px;
+  }
+
+  /* Shift type selector in modal */
+  .shift-selector {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    margin-bottom: 8px;
+  }
+  .shift-selector button {
+    padding: 10px 6px; font-size: 12px; font-weight: 600;
+    border: 2px solid var(--border); background: white;
+    border-radius: 8px; cursor: pointer; font-family: inherit;
+    display: flex; flex-direction: column; align-items: center; gap: 2px;
+  }
+  .shift-selector button .emoji { font-size: 18px; }
+  .shift-selector button.active {
+    border-color: var(--blue); background: #e3f2fd; color: var(--blue);
+  }
+  .shift-selector button:active { transform: scale(0.96); }
+  .shift-selector .reset {
+    grid-column: span 3; border-color: var(--muted); color: var(--sub);
+    padding: 8px; font-size: 11px;
+  }
+  .shift-selector .reset.active {
+    background: var(--hover); color: var(--sub); border-color: var(--muted);
+  }
+  .shift-info {
+    background: #fff8e1; padding: 8px 10px; border-radius: 6px;
+    font-size: 11px; color: #6d4c00; margin-bottom: 8px;
+    border-left: 3px solid var(--yellow);
   }
 </style>
 </head>
@@ -404,6 +631,10 @@
       <div class="row">
         <span class="label">야간 근무 완료</span>
         <span class="val"><span id="done-night">0</span> 일 · <span id="earn-night">0</span> 원</span>
+      </div>
+      <div class="row" id="ot-row" style="display:none">
+        <span class="label">⭐ 특근 완료</span>
+        <span class="val"><span id="done-ot">0</span> 일 · <span id="earn-ot">0</span> 원</span>
       </div>
       <div class="row">
         <span class="label">주휴수당 (누적)</span>
@@ -520,7 +751,10 @@
       </div>
 
       <div style="font-size:11px;color:var(--muted);margin-top:6px">
-        ※ 주별 교대 (주간↔야간) · 근무일 월~금 · 구체 시간은 부서별 근무편성표 기준
+        ※ 기본 근무일: <b>월~금</b> · 주별 교대 (주간↔야간)<br>
+        ※ 토·일·공휴일에 <b>특근</b> 가능 (임금 다름 · 주간 165,120원 · 야간 206,400원)<br>
+        ※ <b>대체공휴일 근무 시 특근으로 처리</b> (예: 8/17 광복절 대체휴일)<br>
+        ※ 구체 시간은 부서별 근무편성표 기준
       </div>
     </div>
 
@@ -588,10 +822,14 @@
     <div class="card">
       <h2>📊 전체 요약</h2>
       <div class="quick-stats">
-        <div class="quick-stat"><div class="label">총 근무일</div><div class="value">39<span class="unit"> 일</span></div></div>
-        <div class="quick-stat"><div class="label">총 휴일</div><div class="value">18<span class="unit"> 일</span></div></div>
-        <div class="quick-stat"><div class="label">주간 근무</div><div class="value">22<span class="unit"> 일</span></div></div>
-        <div class="quick-stat"><div class="label">야간 근무</div><div class="value">17<span class="unit"> 일</span></div></div>
+        <div class="quick-stat"><div class="label">총 근무일</div><div class="value" id="stat-total-days">39<span class="unit"> 일</span></div></div>
+        <div class="quick-stat"><div class="label">총 휴일</div><div class="value" id="stat-off-days">18<span class="unit"> 일</span></div></div>
+        <div class="quick-stat"><div class="label">주간 근무</div><div class="value" id="stat-day-days">22<span class="unit"> 일</span></div></div>
+        <div class="quick-stat"><div class="label">야간 근무</div><div class="value" id="stat-night-days">17<span class="unit"> 일</span></div></div>
+        <div class="quick-stat" id="stat-ot-block" style="display:none"><div class="label">⭐ 특근</div><div class="value" id="stat-ot-days">0<span class="unit"> 일</span></div></div>
+      </div>
+      <div class="shift-info" style="margin-top:10px">
+        💡 근무일: 월~금 기본 · <b>토·일·공휴일에도 특근 가능</b> · 캘린더에서 날짜 탭 → 근무 유형 변경.
       </div>
     </div>
 
@@ -717,6 +955,87 @@
     </div>
   </div>
 
+  <!-- ============ 메모 · 기록 탭 ============ -->
+  <div class="tab" id="tab-memo">
+    <div class="card">
+      <h2>💤 오늘의 컨디션 기록</h2>
+      <div class="cond-input">
+        <div class="cond-row">
+          <label>수면 시간 (시간)</label>
+          <input type="number" id="cond-hours" step="0.5" min="0" max="24" placeholder="예: 6.5">
+        </div>
+        <div class="cond-row">
+          <label>컨디션 점수</label>
+          <div class="rating" id="cond-rating">
+            <button data-val="1">😩</button>
+            <button data-val="2">😕</button>
+            <button data-val="3">😐</button>
+            <button data-val="4">🙂</button>
+            <button data-val="5">😄</button>
+          </div>
+        </div>
+        <div class="cond-row">
+          <label>메모 (선택)</label>
+          <textarea id="cond-notes" placeholder="오늘 어땠는지..."></textarea>
+        </div>
+        <button class="btn-primary btn-full" onclick="saveCondition()">오늘 컨디션 저장</button>
+      </div>
+      <div class="cond-history" id="cond-history"></div>
+    </div>
+
+    <div class="card">
+      <h2>✅ 투두 리스트</h2>
+      <div class="todo-add">
+        <input type="text" id="todo-input" placeholder="할 일 입력..." onkeydown="if(event.key==='Enter')addTodo()">
+        <button onclick="addTodo()">추가</button>
+      </div>
+      <ul class="todo-list" id="todo-list"></ul>
+    </div>
+
+    <div class="card">
+      <h2>📝 메모 / 일기</h2>
+      <div class="cond-input">
+        <textarea id="memo-input" placeholder="자유롭게 쓰기..." style="min-height:80px;padding:10px 12px;border:1px solid var(--border);border-radius:8px;font-size:14px;font-family:inherit;outline:none;"></textarea>
+        <button class="btn-primary btn-full" onclick="addMemo()">메모 저장</button>
+      </div>
+      <div id="memo-list" style="margin-top:12px"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ============ 일정 모달 (달력 셀 탭) ============ -->
+<div class="modal-overlay" id="event-modal" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">일정</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-status" id="modal-status"></div>
+
+    <h3 style="font-size:13px;margin-bottom:6px;color:var(--sub)">⚙️ 이 날의 근무 유형</h3>
+    <div class="shift-info">
+      토·일·공휴일에 출근하면 <b>특근</b>으로 설정하세요. 임금이 다르게 계산됩니다 (주간 165,120원 · 야간 206,400원).
+    </div>
+    <div class="shift-selector" id="shift-selector">
+      <button data-type="day" onclick="setShift('day')"><span class="emoji">☀️</span>주간</button>
+      <button data-type="night" onclick="setShift('night')"><span class="emoji">🌙</span>야간</button>
+      <button data-type="rest" onclick="setShift('rest')"><span class="emoji">🛌</span>휴무</button>
+      <button data-type="day-ot" onclick="setShift('day-ot')"><span class="emoji">⭐☀️</span>특근 주간</button>
+      <button data-type="night-ot" onclick="setShift('night-ot')"><span class="emoji">⭐🌙</span>특근 야간</button>
+      <button data-type="holiday" onclick="setShift('holiday')"><span class="emoji">🎌</span>공휴일</button>
+      <button data-type="reset" class="reset" onclick="setShift(null)">↺ 원래 스케줄로 되돌리기</button>
+    </div>
+
+    <h3 style="font-size:13px;margin-bottom:6px;color:var(--sub);margin-top:14px">📌 개인 일정</h3>
+    <div id="modal-events"></div>
+
+    <div class="add-event-form">
+      <input type="text" id="event-title" placeholder="일정 제목 (예: 예비군 훈련)">
+      <textarea id="event-notes" placeholder="세부 내용 (선택)"></textarea>
+      <button class="btn-primary btn-full" onclick="saveEvent()">일정 추가</button>
+    </div>
+  </div>
 </div>
 
 <div class="nav">
@@ -724,6 +1043,7 @@
   <button data-tab="bus"><span class="icon">🚌</span><span class="label">버스</span></button>
   <button data-tab="work"><span class="icon">💼</span><span class="label">근무</span></button>
   <button data-tab="plan"><span class="icon">📅</span><span class="label">계획</span></button>
+  <button data-tab="memo"><span class="icon">📝</span><span class="label">메모</span></button>
 </div>
 
 <script>
@@ -815,7 +1135,7 @@ const schedule = {
   '2026-08-08': 'rest', '2026-08-09': 'sunday',
   '2026-08-10': 'night', '2026-08-11': 'night', '2026-08-12': 'night', '2026-08-13': 'night', '2026-08-14': 'night',
   '2026-08-15': 'holiday', '2026-08-16': 'sunday',
-  '2026-08-17': 'day', '2026-08-18': 'day', '2026-08-19': 'day', '2026-08-20': 'day', '2026-08-21': 'day',
+  '2026-08-17': 'day-ot', '2026-08-18': 'day', '2026-08-19': 'day', '2026-08-20': 'day', '2026-08-21': 'day',
   '2026-08-22': 'rest', '2026-08-23': 'sunday',
   '2026-08-24': 'night', '2026-08-25': 'night', '2026-08-26': 'night', '2026-08-27': 'night', '2026-08-28': 'night',
   '2026-08-29': 'rest', '2026-08-30': 'sunday',
@@ -835,11 +1155,19 @@ const schedule = {
 const typeLabels = {
   day: { name: '주간 근무', short: '주간', time: '07:00 ~ 19:00' },
   night: { name: '야간 근무', short: '야간', time: '19:00 ~ 익일 07:00' },
+  'day-ot': { name: '⭐ 특근 (주간)', short: '특근☀', time: '07:00 ~ 19:00 · 휴일 특근' },
+  'night-ot': { name: '⭐ 특근 (야간)', short: '특근🌙', time: '19:00 ~ 익일 07:00 · 휴일 특근' },
   rest: { name: '휴무일', short: '휴무', time: '자유 시간' },
   sunday: { name: '주휴일', short: '주휴', time: '일요일 · 완전 휴식' },
   holiday: { name: '공휴일', short: '공휴', time: '휴일' },
   out: { name: '계약 시작 전/후', short: '계약외', time: '' }
 };
+
+// User's schedule overrides (특근 등록 · 근무 유형 변경)
+let scheduleOverrides = load('ys_schedule_overrides', {});
+function getType(key) {
+  return scheduleOverrides[key] || schedule[key] || 'out';
+}
 
 // ============ TAB NAVIGATION ============
 document.querySelectorAll('.nav button').forEach(btn => {
@@ -865,7 +1193,7 @@ function dateKey(d) { return fmtDate(d); }
 function updateHome() {
   const now = new Date();
   const today = dateKey(now);
-  const type = schedule[today] || 'out';
+  const type = getType(today);
   const info = typeLabels[type];
 
   // Hero
@@ -883,7 +1211,7 @@ function updateHome() {
   document.getElementById('next-bus-info').textContent = nb.info;
 
   // Contract days left
-  const end = new Date(2026, 8, 30); // Sep 30
+  const end = new Date(2026, 8, 30);
   const daysLeft = Math.max(0, Math.ceil((end - now) / 86400000));
   document.getElementById('days-left').textContent = daysLeft;
 
@@ -892,7 +1220,7 @@ function updateHome() {
   for (let i = 0; i < 60; i++) {
     const check = new Date(now);
     check.setDate(check.getDate() + i);
-    const t = schedule[dateKey(check)];
+    const t = getType(dateKey(check));
     if (t === 'rest' || t === 'sunday' || t === 'holiday') {
       nextOff = i;
       break;
@@ -908,9 +1236,9 @@ function updateHome() {
   for (let i = 0; i < 5; i++) {
     const d = new Date(monday);
     d.setDate(d.getDate() + i);
-    const t = schedule[dateKey(d)];
-    if (t === 'day') { weekType = '☀️ 주간'; weekDays++; }
-    else if (t === 'night') { weekType = '🌙 야간'; weekDays++; }
+    const t = getType(dateKey(d));
+    if (t === 'day' || t === 'day-ot') { weekType = '☀️ 주간'; weekDays++; }
+    else if (t === 'night' || t === 'night-ot') { weekType = '🌙 야간'; weekDays++; }
   }
   document.getElementById('this-week').textContent = weekType;
   document.getElementById('this-week-days').textContent = weekDays;
@@ -918,31 +1246,33 @@ function updateHome() {
 
 function computeNextBus(now, type) {
   const hm = now.getHours() * 60 + now.getMinutes();
-  const morningBus = 5*60 + 30; // 05:30
-  const eveningBus = 17*60 + 22; // 17:22
-  const yesterdayEvening = 17*60 + 22;
+  const morningBus = 5*60 + 30;
+  const eveningBus = 17*60 + 22;
 
-  if (type === 'day') {
+  const isDay = type === 'day' || type === 'day-ot';
+  const isNight = type === 'night' || type === 'night-ot';
+  const otTag = (type === 'day-ot' || type === 'night-ot') ? ' ⭐특근' : '';
+
+  if (isDay) {
     if (hm < morningBus) {
-      return { time: '05:30', info: '주간 출근 · 화명역 2번출구 · 구포/증산 노선' };
+      return { time: '05:30', info: '주간 출근' + otTag + ' · 화명역 2번출구' };
     } else if (hm < 19*60) {
-      return { time: '~19:00', info: '주간 근무 중 · 퇴근 버스 19시경' };
+      return { time: '~19:00', info: '주간 근무 중' + otTag + ' · 퇴근 19시경' };
     } else {
       return { time: '내일 05:30', info: '주간 출근 (내일 새벽)' };
     }
-  } else if (type === 'night') {
+  } else if (isNight) {
     if (hm < eveningBus) {
-      return { time: '17:22', info: '야간 출근 · 화명역 2번출구 · 구포/증산 노선' };
+      return { time: '17:22', info: '야간 출근' + otTag + ' · 화명역 2번출구' };
     } else if (hm < 24*60) {
-      return { time: '내일 07:00', info: '야간 근무 중 · 퇴근 07시경' };
+      return { time: '내일 07:00', info: '야간 근무 중' + otTag + ' · 퇴근 07시경' };
     }
   } else if (type === 'holiday' || type === 'rest' || type === 'sunday') {
-    // Check tomorrow
     const tomorrow = new Date(now);
     tomorrow.setDate(tomorrow.getDate() + 1);
-    const tType = schedule[dateKey(tomorrow)];
-    if (tType === 'day') return { time: '내일 05:30', info: '내일 주간 출근' };
-    if (tType === 'night') return { time: '내일 17:22', info: '내일 야간 출근' };
+    const tType = getType(dateKey(tomorrow));
+    if (tType === 'day' || tType === 'day-ot') return { time: '내일 05:30', info: '내일 주간 출근' + (tType === 'day-ot' ? ' (⭐특근)' : '') };
+    if (tType === 'night' || tType === 'night-ot') return { time: '내일 17:22', info: '내일 야간 출근' + (tType === 'night-ot' ? ' (⭐특근)' : '') };
     return { time: '휴일', info: '오늘·내일 모두 휴일' };
   }
   return { time: '-', info: '계약 기간 외' };
@@ -1012,24 +1342,27 @@ renderBus();
 function renderCalendar(monthKey, containerId, year, month) {
   const container = document.getElementById(containerId);
   const first = new Date(year, month, 1);
-  const startPad = (first.getDay() + 6) % 7; // Monday-first
+  const startPad = (first.getDay() + 6) % 7;
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const todayKey = dateKey(new Date());
+  const evts = load('ys_events', {});
 
   let html = '';
   for (let i = 0; i < startPad; i++) html += '<div class="cell empty"></div>';
 
   for (let d = 1; d <= daysInMonth; d++) {
     const key = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const t = schedule[key] || 'out';
+    const t = getType(key);
     const info = typeLabels[t];
     const isToday = key === todayKey ? ' today' : '';
+    const hasEvt = (evts[key] && evts[key].length > 0) ? ' has-event' : '';
+    const isOverridden = scheduleOverrides[key] ? ' overridden' : '';
     let lbl = info.short;
-    if (key === '2026-08-15') lbl = '🎌광복';
-    if (key === '2026-09-24' || key === '2026-09-26') lbl = '🎌추석';
-    if (key === '2026-09-25') lbl = '🎌추석';
-    if (key === '2026-09-30') lbl = '주간<br>계약↓';
-    html += `<div class="cell ${t}${isToday}"><span class="num">${d}</span><span class="lbl">${lbl}</span></div>`;
+    if (key === '2026-08-15' && !scheduleOverrides[key]) lbl = '🎌광복';
+    if ((key === '2026-09-24' || key === '2026-09-26') && !scheduleOverrides[key]) lbl = '🎌추석';
+    if (key === '2026-09-25' && !scheduleOverrides[key]) lbl = '🎌추석';
+    if (key === '2026-09-30' && !scheduleOverrides[key]) lbl = '주간<br>계약↓';
+    html += `<div class="cell ${t}${isToday}${hasEvt}${isOverridden}" onclick="openDayModal('${key}')"><span class="num">${d}</span><span class="lbl">${lbl}</span></div>`;
   }
   container.innerHTML = html;
 }
@@ -1037,12 +1370,407 @@ function renderCalendar(monthKey, containerId, year, month) {
 renderCalendar('aug', 'cal-aug', 2026, 7);
 renderCalendar('sep', 'cal-sep', 2026, 8);
 
+// ============ STORAGE HELPERS ============
+function load(key, def) {
+  try { const s = localStorage.getItem(key); return s ? JSON.parse(s) : def; }
+  catch { return def; }
+}
+function save(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+let todos = load('ys_todos', []);
+let memos = load('ys_memos', []);
+let events = load('ys_events', {});
+let conditions = load('ys_conditions', {});
+let selectedRating = null;
+let pendingDelMemo = null;
+let pendingDelEvent = null;
+let pendingDelTodo = null;
+
+// Preload 예비군 훈련 example on first run
+if (!localStorage.getItem('ys_init')) {
+  events['2026-08-24'] = [{
+    id: Date.now(),
+    title: '🎖️ 예비군 작계 1차훈련',
+    notes: '10:00~16:00 · 화명2동 주민센터 2층 대회의실\n입소 10:00까지 · 문의 051-338-6113'
+  }];
+  save('ys_events', events);
+  localStorage.setItem('ys_init', '1');
+}
+
+// ============ TODOS ============
+function renderTodos() {
+  const list = document.getElementById('todo-list');
+  if (todos.length === 0) {
+    list.innerHTML = '<div class="empty-state">할 일이 없습니다. 위에 입력해서 추가하세요.</div>';
+    return;
+  }
+  // Sort: undone first, then by creation
+  const sorted = [...todos].sort((a,b) => (a.done - b.done) || (b.id - a.id));
+  list.innerHTML = sorted.map(t => {
+    const isPending = pendingDelTodo === t.id;
+    const delIcon = isPending ? '⚠️' : '🗑';
+    const delStyle = isPending ? 'color:white;background:var(--red);border-radius:6px;padding:4px 8px;' : '';
+    return `<li class="todo-item ${t.done ? 'done' : ''}">
+      <div class="todo-check" onclick="toggleTodo(${t.id})">${t.done ? '✓' : ''}</div>
+      <div class="text">${esc(t.text)}</div>
+      <button class="del" style="${delStyle}" onclick="delTodo(${t.id})">${delIcon}</button>
+    </li>`;
+  }).join('');
+}
+function addTodo() {
+  const input = document.getElementById('todo-input');
+  const text = input.value.trim();
+  if (!text) return;
+  todos.push({ id: Date.now(), text, done: false });
+  save('ys_todos', todos);
+  input.value = '';
+  renderTodos();
+  updateHomeQuickStats();
+}
+function toggleTodo(id) {
+  const t = todos.find(x => x.id === id);
+  if (t) { t.done = !t.done; save('ys_todos', todos); renderTodos(); updateHomeQuickStats(); }
+}
+function delTodo(id) {
+  if (pendingDelTodo === id) {
+    todos = todos.filter(x => x.id !== id);
+    save('ys_todos', todos);
+    pendingDelTodo = null;
+    renderTodos();
+    updateHomeQuickStats();
+  } else {
+    pendingDelTodo = id;
+    renderTodos();
+    setTimeout(() => {
+      if (pendingDelTodo === id) { pendingDelTodo = null; renderTodos(); }
+    }, 3000);
+  }
+}
+
+// ============ MEMOS ============
+function renderMemos() {
+  const list = document.getElementById('memo-list');
+  if (memos.length === 0) {
+    list.innerHTML = '<div class="empty-state">저장된 메모가 없습니다.</div>';
+    return;
+  }
+  const sorted = [...memos].sort((a,b) => b.id - a.id);
+  list.innerHTML = sorted.map(m => {
+    const d = new Date(m.id);
+    const ds = `${d.getMonth()+1}/${d.getDate()} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+    const edited = m.edited ? ` (수정: ${new Date(m.edited).toLocaleDateString('ko-KR')})` : '';
+    const delText = pendingDelMemo === m.id ? '⚠️ 한번 더 탭하면 삭제' : '🗑 삭제';
+    const delStyle = pendingDelMemo === m.id ? 'background:var(--red);color:white;' : '';
+    return `<div class="memo-entry" id="memo-${m.id}">
+      <div class="head">
+        <span>${ds}${edited}</span>
+      </div>
+      <div class="content">${esc(m.content)}</div>
+      <div class="edit-area">
+        <textarea id="edit-input-${m.id}">${esc(m.content)}</textarea>
+        <div class="edit-actions">
+          <button class="btn-save" onclick="saveEditMemo(${m.id})">저장</button>
+          <button class="btn-cancel" onclick="cancelEditMemo(${m.id})">취소</button>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-edit" onclick="startEditMemo(${m.id})">✏️ 수정</button>
+        <button class="btn-del" style="${delStyle}" onclick="delMemo(${m.id})">${delText}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function addMemo() {
+  const input = document.getElementById('memo-input');
+  const content = input.value.trim();
+  if (!content) return;
+  memos.push({ id: Date.now(), content });
+  save('ys_memos', memos);
+  input.value = '';
+  renderMemos();
+}
+function startEditMemo(id) {
+  const el = document.getElementById('memo-' + id);
+  if (el) {
+    el.classList.add('editing');
+    const ta = document.getElementById('edit-input-' + id);
+    if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+  }
+}
+function cancelEditMemo(id) {
+  const el = document.getElementById('memo-' + id);
+  if (el) el.classList.remove('editing');
+  renderMemos();
+}
+function saveEditMemo(id) {
+  const ta = document.getElementById('edit-input-' + id);
+  if (!ta) return;
+  const newContent = ta.value.trim();
+  if (!newContent) { alert('내용을 입력하세요.'); return; }
+  const m = memos.find(x => x.id === id);
+  if (m) {
+    m.content = newContent;
+    m.edited = Date.now();
+    save('ys_memos', memos);
+    renderMemos();
+  }
+}
+function delMemo(id) {
+  if (pendingDelMemo === id) {
+    // Second tap = actually delete
+    memos = memos.filter(m => m.id !== id);
+    save('ys_memos', memos);
+    pendingDelMemo = null;
+    renderMemos();
+  } else {
+    // First tap = arm the delete
+    pendingDelMemo = id;
+    renderMemos();
+    setTimeout(() => {
+      if (pendingDelMemo === id) {
+        pendingDelMemo = null;
+        renderMemos();
+      }
+    }, 3000);
+  }
+}
+
+// ============ CONDITIONS ============
+document.querySelectorAll('#cond-rating button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#cond-rating button').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedRating = parseInt(btn.dataset.val);
+  });
+});
+function saveCondition() {
+  const hours = parseFloat(document.getElementById('cond-hours').value);
+  const notes = document.getElementById('cond-notes').value.trim();
+  if (!hours && !selectedRating && !notes) { alert('내용을 입력해주세요.'); return; }
+  const key = dateKey(new Date());
+  conditions[key] = { hours: hours || null, rating: selectedRating, notes, ts: Date.now() };
+  save('ys_conditions', conditions);
+  document.getElementById('cond-hours').value = '';
+  document.getElementById('cond-notes').value = '';
+  document.querySelectorAll('#cond-rating button').forEach(b => b.classList.remove('selected'));
+  selectedRating = null;
+  renderConditions();
+  alert('오늘 컨디션 저장됨');
+}
+function renderConditions() {
+  const el = document.getElementById('cond-history');
+  const keys = Object.keys(conditions).sort().reverse().slice(0, 10);
+  if (keys.length === 0) { el.innerHTML = ''; return; }
+  const emojis = ['','😩','😕','😐','🙂','😄'];
+  el.innerHTML = '<h3 style="font-size:13px;margin-bottom:6px;color:var(--sub)">최근 기록</h3>' +
+    keys.map(k => {
+      const c = conditions[k];
+      const d = new Date(k);
+      const ds = `${d.getMonth()+1}/${d.getDate()} (${['일','월','화','수','목','금','토'][d.getDay()]})`;
+      return `<div class="cond-entry">
+        <div class="head">
+          <span class="date">${ds}</span>
+          <span class="stars">${c.rating ? emojis[c.rating] : ''}</span>
+        </div>
+        ${c.hours ? `<div>수면: ${c.hours}시간</div>` : ''}
+        ${c.notes ? `<div style="margin-top:2px;color:var(--sub)">${esc(c.notes)}</div>` : ''}
+      </div>`;
+    }).join('');
+}
+
+// ============ EVENTS (modal) ============
+let modalDate = null;
+function openDayModal(dateStr) {
+  modalDate = dateStr;
+  const d = new Date(dateStr);
+  const dayNames = ['일','월','화','수','목','금','토'];
+  document.getElementById('modal-title').textContent =
+    `${d.getMonth()+1}월 ${d.getDate()}일 (${dayNames[d.getDay()]})`;
+
+  const type = getType(dateStr);
+  const info = typeLabels[type];
+  const statusEl = document.getElementById('modal-status');
+  statusEl.className = 'modal-status ' + type;
+  const origType = schedule[dateStr];
+  const overriddenNote = scheduleOverrides[dateStr] ? ' <span style="opacity:0.7;font-size:11px">(변경됨 · 원래: ' + (origType ? typeLabels[origType].name : '없음') + ')</span>' : '';
+  statusEl.innerHTML = `<b>${info.name}</b>${info.time ? ' · ' + info.time : ''}${overriddenNote}`;
+
+  renderModalEvents();
+  updateShiftSelectorButtons();
+  document.getElementById('event-title').value = '';
+  document.getElementById('event-notes').value = '';
+  document.getElementById('event-modal').classList.add('show');
+}
+function updateShiftSelectorButtons() {
+  const curType = getType(modalDate);
+  document.querySelectorAll('#shift-selector button').forEach(b => {
+    b.classList.toggle('active', b.dataset.type === curType || (b.dataset.type === 'reset' && !scheduleOverrides[modalDate]));
+  });
+}
+function closeModal() {
+  document.getElementById('event-modal').classList.remove('show');
+  modalDate = null;
+}
+function renderModalEvents() {
+  const el = document.getElementById('modal-events');
+  const list = events[modalDate] || [];
+  if (list.length === 0) {
+    el.innerHTML = '<div class="empty-state" style="padding:14px 8px">등록된 개인 일정이 없습니다.</div>';
+    return;
+  }
+  el.innerHTML = list.map(e => {
+    const delText = pendingDelEvent === e.id ? '⚠️ 한번 더 탭하면 삭제' : '🗑 삭제';
+    const delStyle = pendingDelEvent === e.id ? 'background:var(--red);color:white;' : '';
+    return `<div class="event-item" id="event-${e.id}">
+      <div class="content">
+        <div class="title">${esc(e.title)}</div>
+        ${e.notes ? `<div class="notes">${esc(e.notes)}</div>` : ''}
+      </div>
+      <div class="edit-area">
+        <input type="text" id="edit-evt-title-${e.id}" value="${esc(e.title)}" placeholder="일정 제목">
+        <textarea id="edit-evt-notes-${e.id}" placeholder="세부 내용 (선택)">${esc(e.notes || '')}</textarea>
+        <div class="edit-actions">
+          <button class="btn-save" onclick="saveEditEvent(${e.id})">저장</button>
+          <button class="btn-cancel" onclick="cancelEditEvent(${e.id})">취소</button>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="btn-edit" onclick="startEditEvent(${e.id})">✏️ 수정</button>
+        <button class="btn-del" style="${delStyle}" onclick="delEvent(${e.id})">${delText}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function saveEvent() {
+  const title = document.getElementById('event-title').value.trim();
+  const notes = document.getElementById('event-notes').value.trim();
+  if (!title) { alert('일정 제목을 입력해주세요.'); return; }
+  if (!events[modalDate]) events[modalDate] = [];
+  events[modalDate].push({ id: Date.now(), title, notes });
+  save('ys_events', events);
+  document.getElementById('event-title').value = '';
+  document.getElementById('event-notes').value = '';
+  renderModalEvents();
+  renderCalendar('aug', 'cal-aug', 2026, 7);
+  renderCalendar('sep', 'cal-sep', 2026, 8);
+}
+function startEditEvent(id) {
+  const el = document.getElementById('event-' + id);
+  if (el) {
+    el.classList.add('editing');
+    const ta = document.getElementById('edit-evt-title-' + id);
+    if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+  }
+}
+function cancelEditEvent(id) {
+  const el = document.getElementById('event-' + id);
+  if (el) el.classList.remove('editing');
+  renderModalEvents();
+}
+function saveEditEvent(id) {
+  const titleEl = document.getElementById('edit-evt-title-' + id);
+  const notesEl = document.getElementById('edit-evt-notes-' + id);
+  if (!titleEl) return;
+  const title = titleEl.value.trim();
+  const notes = notesEl ? notesEl.value.trim() : '';
+  if (!title) { alert('일정 제목을 입력하세요.'); return; }
+  const list = events[modalDate] || [];
+  const ev = list.find(x => x.id === id);
+  if (ev) {
+    ev.title = title;
+    ev.notes = notes;
+    ev.edited = Date.now();
+    save('ys_events', events);
+    renderModalEvents();
+  }
+}
+function setShift(type) {
+  if (type === null) {
+    delete scheduleOverrides[modalDate];
+  } else {
+    scheduleOverrides[modalDate] = type;
+  }
+  save('ys_schedule_overrides', scheduleOverrides);
+  // Re-render everything
+  const newType = getType(modalDate);
+  const info = typeLabels[newType];
+  const statusEl = document.getElementById('modal-status');
+  statusEl.className = 'modal-status ' + newType;
+  const origType = schedule[modalDate];
+  const overriddenNote = scheduleOverrides[modalDate] ? ' <span style="opacity:0.7;font-size:11px">(변경됨 · 원래: ' + (origType ? typeLabels[origType].name : '없음') + ')</span>' : '';
+  statusEl.innerHTML = `<b>${info.name}</b>${info.time ? ' · ' + info.time : ''}${overriddenNote}`;
+  updateShiftSelectorButtons();
+  renderCalendar('aug', 'cal-aug', 2026, 7);
+  renderCalendar('sep', 'cal-sep', 2026, 8);
+  updateHome();
+  updateEarnings();
+  updateSummaryStats();
+}
+
+function delEvent(id) {
+  if (pendingDelEvent === id) {
+    // Second tap = actually delete
+    const list = events[modalDate] || [];
+    events[modalDate] = list.filter(e => e.id !== id);
+    if (events[modalDate].length === 0) delete events[modalDate];
+    save('ys_events', events);
+    pendingDelEvent = null;
+    renderModalEvents();
+    renderCalendar('aug', 'cal-aug', 2026, 7);
+    renderCalendar('sep', 'cal-sep', 2026, 8);
+  } else {
+    // First tap = arm
+    pendingDelEvent = id;
+    renderModalEvents();
+    setTimeout(() => {
+      if (pendingDelEvent === id) {
+        pendingDelEvent = null;
+        renderModalEvents();
+      }
+    }, 3000);
+  }
+}
+
+// ============ HOME QUICK STATS UPDATE ============
+function updateHomeQuickStats() {
+  // Could add today's todos count to home if needed
+}
+
+function updateSummaryStats() {
+  let day=0, night=0, ot=0, off=0, total=0;
+  const start = new Date(2026, 7, 5);
+  const end = new Date(2026, 8, 30);
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate()+1)) {
+    const t = getType(dateKey(d));
+    if (t === 'day') { day++; total++; }
+    else if (t === 'night') { night++; total++; }
+    else if (t === 'day-ot' || t === 'night-ot') { ot++; total++; }
+    else if (t === 'rest' || t === 'sunday' || t === 'holiday') off++;
+  }
+  const setText = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
+  setText('stat-total-days', total + '<span class="unit"> 일</span>');
+  setText('stat-off-days', off + '<span class="unit"> 일</span>');
+  setText('stat-day-days', day + '<span class="unit"> 일</span>');
+  setText('stat-night-days', night + '<span class="unit"> 일</span>');
+  setText('stat-ot-days', ot + '<span class="unit"> 일</span>');
+  const otBlock = document.getElementById('stat-ot-block');
+  if (otBlock) otBlock.style.display = ot > 0 ? '' : 'none';
+}
+
+// Initial render
+renderTodos();
+renderMemos();
+renderConditions();
+updateSummaryStats();
+
 // ============ EARNINGS COUNTER ============
 const WAGE = {
   hourly: 10320,
   daily: 82560,           // 8h base
   dayShiftTotal: 113520,  // base + 연장 (2h × 시급 × 1.5 = 30,960)
   nightShiftTotal: 154800, // day + 야간수당 (8h × 시급 × 0.5 = 41,280)
+  dayShiftOT: 165120,     // 특근 주간 (일당×1.5 + 시급×2×2h = 123,840 + 41,280)
+  nightShiftOT: 206400,   // 특근 야간 (특근주간 + 야간수당 41,280)
   weeklyBonus: 82560,     // 주휴수당 = 1일 통상임금 (매주 개근시)
   monthlyBonus: 30000,    // 만근수당 (월 결근 없을 시)
   netRatio: 0.874         // 실수령 비율 (공제 약 12.6%)
@@ -1052,9 +1780,25 @@ const WAGE = {
 // Day shift: 07:00 ~ 19:00 (12h) — earn 113,520원 evenly
 // Night shift: 19:00 ~ 07:00 next day (12h) — earn 154,800원 evenly
 function shiftEarningsPerSec(type) {
-  const total = type === 'day' ? WAGE.dayShiftTotal : WAGE.nightShiftTotal;
+  let total;
+  if (type === 'day') total = WAGE.dayShiftTotal;
+  else if (type === 'night') total = WAGE.nightShiftTotal;
+  else if (type === 'day-ot') total = WAGE.dayShiftOT;
+  else if (type === 'night-ot') total = WAGE.nightShiftOT;
+  else total = 0;
   return total / (12 * 3600); // 원/초
 }
+
+function shiftDailyAmount(type) {
+  if (type === 'day') return WAGE.dayShiftTotal;
+  if (type === 'night') return WAGE.nightShiftTotal;
+  if (type === 'day-ot') return WAGE.dayShiftOT;
+  if (type === 'night-ot') return WAGE.nightShiftOT;
+  return 0;
+}
+function isDayShift(type) { return type === 'day' || type === 'day-ot'; }
+function isNightShift(type) { return type === 'night' || type === 'night-ot'; }
+function isWorkShift(type) { return isDayShift(type) || isNightShift(type); }
 
 function fmtWon(n) {
   return Math.floor(n).toLocaleString('ko-KR');
@@ -1064,90 +1808,84 @@ function calcEarnings(now) {
   const nowKey = dateKey(now);
   const nowMin = now.getHours() * 60 + now.getMinutes() + now.getSeconds()/60;
 
-  let doneDay = 0, doneNight = 0;
-  let earnDay = 0, earnNight = 0;
+  let doneDay = 0, doneNight = 0, doneOT = 0;
+  let earnDay = 0, earnNight = 0, earnOT = 0;
   let currentType = null;
-  let currentProgress = 0; // 0-1
+  let currentProgress = 0;
   let currentShiftEarning = 0;
 
-  // Iterate all contract days up to now
-  const contractStart = new Date(2026, 7, 5); // Aug 5
-  const contractEnd = new Date(2026, 8, 30);  // Sep 30
+  const contractStart = new Date(2026, 7, 5);
+  const contractEnd = new Date(2026, 8, 30);
   const iterEnd = now < contractEnd ? now : contractEnd;
 
   for (let d = new Date(contractStart); d <= iterEnd; d.setDate(d.getDate()+1)) {
     const key = dateKey(d);
-    const type = schedule[key];
-    if (type !== 'day' && type !== 'night') continue;
+    const type = getType(key);
+    if (!isWorkShift(type)) continue;
 
     const isToday = key === nowKey;
+    const daily = shiftDailyAmount(type);
+    const isOT = (type === 'day-ot' || type === 'night-ot');
 
-    if (type === 'day') {
+    if (isDayShift(type)) {
       // 07:00 ~ 19:00
       if (isToday) {
         if (nowMin < 7*60) {
           // hasn't started
         } else if (nowMin >= 19*60) {
           // completed
-          doneDay++; earnDay += WAGE.dayShiftTotal;
+          if (isOT) { doneOT++; earnOT += daily; }
+          else { doneDay++; earnDay += daily; }
         } else {
-          // in progress
-          currentType = 'day';
-          const elapsed = (nowMin - 7*60) * 60; // seconds elapsed
+          currentType = type;
+          const elapsed = (nowMin - 7*60) * 60;
           currentProgress = elapsed / (12 * 3600);
-          currentShiftEarning = shiftEarningsPerSec('day') * elapsed;
+          currentShiftEarning = shiftEarningsPerSec(type) * elapsed;
         }
       } else if (d < now) {
-        doneDay++; earnDay += WAGE.dayShiftTotal;
+        if (isOT) { doneOT++; earnOT += daily; }
+        else { doneDay++; earnDay += daily; }
       }
-    } else if (type === 'night') {
-      // 19:00 ~ 07:00 next day
-      // Check if we're in the night portion (evening of this day)
-      // OR in the morning portion (next day 00:00~07:00)
+    } else if (isNightShift(type)) {
       const nextDay = new Date(d); nextDay.setDate(nextDay.getDate()+1);
       const nextKey = dateKey(nextDay);
       const isNextDayToday = nextKey === nowKey;
 
       if (isToday && nowMin >= 19*60) {
-        // Currently in evening portion (19:00~24:00) of this night shift
-        currentType = 'night';
+        currentType = type;
         const elapsed = (nowMin - 19*60) * 60;
         currentProgress = elapsed / (12 * 3600);
-        currentShiftEarning = shiftEarningsPerSec('night') * elapsed;
+        currentShiftEarning = shiftEarningsPerSec(type) * elapsed;
       } else if (isNextDayToday && nowMin < 7*60) {
-        // In morning portion (0:00~7:00) of this night shift (which started yesterday)
-        currentType = 'night';
-        const elapsed = (5*3600 + nowMin*60); // 5h evening + morning
+        currentType = type;
+        const elapsed = (5*3600 + nowMin*60);
         currentProgress = elapsed / (12 * 3600);
-        currentShiftEarning = shiftEarningsPerSec('night') * elapsed;
+        currentShiftEarning = shiftEarningsPerSec(type) * elapsed;
       } else if (isNextDayToday && nowMin >= 7*60) {
-        // Night shift completed this morning
-        doneNight++; earnNight += WAGE.nightShiftTotal;
+        if (isOT) { doneOT++; earnOT += daily; }
+        else { doneNight++; earnNight += daily; }
       } else if (nextDay < now) {
-        // Night shift fully completed
-        doneNight++; earnNight += WAGE.nightShiftTotal;
+        if (isOT) { doneOT++; earnOT += daily; }
+        else { doneNight++; earnNight += daily; }
       }
     }
   }
 
-  const doneDays = doneDay + doneNight;
-  const completedEarnings = earnDay + earnNight;
+  const doneDays = doneDay + doneNight + doneOT;
+  const completedEarnings = earnDay + earnNight + earnOT;
 
-  // 주휴수당: 매주 만근하면 1주당 82,560원. 완료한 주를 세자
-  // 간단히: 완료된 근무 5일마다 1주로 계산
   const completedWeeks = Math.floor(doneDays / 5);
   const weeklyBonus = completedWeeks * WAGE.weeklyBonus;
 
-  // 만근수당: 8월/9월 각 30,000원 (해당 월 종료 시)
   let monthlyBonus = 0;
-  if (now >= new Date(2026, 8, 1)) monthlyBonus += WAGE.monthlyBonus; // Aug done
-  if (now >= new Date(2026, 9, 1)) monthlyBonus += WAGE.monthlyBonus; // Sep done
+  if (now >= new Date(2026, 8, 1)) monthlyBonus += WAGE.monthlyBonus;
+  if (now >= new Date(2026, 9, 1)) monthlyBonus += WAGE.monthlyBonus;
 
   const total = completedEarnings + currentShiftEarning + weeklyBonus + monthlyBonus;
 
   return {
-    doneDay, doneNight, doneDays,
-    earnDay, earnNight,
+    doneDay, doneNight, doneOT, doneDays,
+    earnDay, earnNight, earnOT,
     currentType, currentProgress, currentShiftEarning,
     weeklyBonus, monthlyBonus,
     total,
@@ -1171,32 +1909,48 @@ function updateEarnings() {
   document.getElementById('earn-total').textContent = fmtWon(e.total) + ' 원';
   document.getElementById('earn-take').textContent = fmtWon(e.takeHome) + ' 원';
 
+  // OT row (may not exist yet on old renders — safe access)
+  const otRow = document.getElementById('ot-row');
+  if (otRow) {
+    if (e.doneOT > 0) {
+      otRow.style.display = '';
+      document.getElementById('done-ot').textContent = e.doneOT;
+      document.getElementById('earn-ot').textContent = fmtWon(e.earnOT);
+    } else {
+      otRow.style.display = 'none';
+    }
+  }
+
   const progress = (e.doneDays / 39) * 100;
   document.getElementById('progress-fill').style.width = progress + '%';
   document.getElementById('earn-progress').textContent = `계약 진행 ${progress.toFixed(1)}%`;
 
   if (e.currentType) {
     card.classList.add('active');
-    const perSec = shiftEarningsPerSec(e.currentType);
-    const perHour = perSec * 3600;
-    document.getElementById('earn-label').textContent = '실시간 적립 중 💚';
-    document.getElementById('earn-status').textContent =
-      e.currentType === 'day' ? '☀️ 주간 근무 중' : '🌙 야간 근무 중';
-    document.getElementById('earn-rate').textContent =
-      `⚡ ${perHour.toFixed(0).toLocaleString ? Math.floor(perHour).toLocaleString('ko-KR') : Math.floor(perHour)}원/시간`;
+    const perHour = shiftEarningsPerSec(e.currentType) * 3600;
+    const isOT = e.currentType.includes('-ot');
+    document.getElementById('earn-label').textContent = isOT ? '⭐ 특근 적립 중 💚' : '실시간 적립 중 💚';
+    const statusMap = {
+      'day': '☀️ 주간 근무 중',
+      'night': '🌙 야간 근무 중',
+      'day-ot': '⭐ 특근 (주간) 근무 중',
+      'night-ot': '⭐ 특근 (야간) 근무 중'
+    };
+    document.getElementById('earn-status').textContent = statusMap[e.currentType];
+    document.getElementById('earn-rate').textContent = `⚡ ${Math.floor(perHour).toLocaleString('ko-KR')}원/시간`;
   } else {
     card.classList.remove('active');
     document.getElementById('earn-label').textContent = '누적 수익 (세전)';
     const nowMin = now.getHours()*60 + now.getMinutes();
-    const todayType = schedule[dateKey(now)];
+    const todayType = getType(dateKey(now));
     let status = '';
     if (!todayType || todayType === 'out') status = '계약 기간 외';
     else if (todayType === 'rest') status = '😌 휴무일 · 다음 근무 대기';
     else if (todayType === 'sunday') status = '🛌 주휴일';
     else if (todayType === 'holiday') status = '🎌 공휴일';
-    else if (todayType === 'day' && nowMin < 7*60) status = '☀️ 곧 주간 근무 시작';
-    else if (todayType === 'day' && nowMin >= 19*60) status = '✅ 오늘 주간 근무 완료';
-    else if (todayType === 'night' && nowMin < 19*60) status = '🌙 곧 야간 근무 시작';
+    else if (isDayShift(todayType) && nowMin < 7*60) status = '☀️ 곧 근무 시작' + (todayType==='day-ot'?' (⭐특근)':'');
+    else if (isDayShift(todayType) && nowMin >= 19*60) status = '✅ 오늘 근무 완료' + (todayType==='day-ot'?' (⭐특근)':'');
+    else if (isNightShift(todayType) && nowMin < 19*60) status = '🌙 곧 근무 시작' + (todayType==='night-ot'?' (⭐특근)':'');
     else status = '대기중';
     document.getElementById('earn-status').textContent = status;
     document.getElementById('earn-rate').textContent = '';
